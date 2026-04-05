@@ -63,27 +63,27 @@ try:
     # Test 1: Division by zero
     bad_math = 10 / 0
 except ZeroDivisionError as e:
-    log_issue("MathError", str(e))
+    log_issue("Math Error", str(e))
 
 try:
     # Test 2: File doesn't exist
     with open("not_a_real_file.txt", "r") as f:
         data = f.read()
 except FileNotFoundError:
-    log_issue("FileMissing", "The text file was not found in the folder.")
+    log_issue("File Missing", "The text file was not found in the folder.")
 
 try:
     # Test 3: String to Int conversion fail
     val = int("python")
 except ValueError:
-    log_issue("ValueError", "Cannot convert alphabetical text into an integer.")
+    log_issue("Value Error", "Invalid number.")
 
 try:
     # Test 4: Accessing index that isn't there
     nums = [1, 5]
     pick = nums[10]
 except IndexError:
-    log_issue("IndexError", "The list index is out of bounds.")
+    log_issue("Index Error", "The list index is out of bounds.")
 
 
 # 3: API INTEGRATION
