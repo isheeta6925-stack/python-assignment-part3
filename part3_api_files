@@ -3,14 +3,12 @@ import os
 import requests
 from datetime import datetime
 
-# --- PART 3: FILES, ERRORS, AND APIS ---
+# 1: WORKING WITH TEXT FILES
+print("- Starting File Operations -")
 
-# 1. Working with Text Files (Reading/Writing/Appending)
-print("--- Section 1: File Operations ---")
-
-# Some notes to save for later
-my_notes = """Python Fundamentals
--------------------
+# Creating some study notes
+my_study_notes = """Python Fundamentals
+--
 1. It is a high-level language.
 2. Indentation matters! No curly braces needed.
 3. Huge library ecosystem (like requests for APIs).
@@ -18,119 +16,126 @@ my_notes = """Python Fundamentals
 5. Great for data science and automation.
 """
 
-# Saving the notes
+# Writing the notes to a new file
 with open("python_notes.txt", "w") as f:
-    f.write(my_notes)
-print("Success: python_notes.txt has been saved.")
+    f.write(my_study_notes)
+print("Saved notes to python_notes.txt")
 
-# Reading it back to check it worked
-print("\nReading notes back from the file:")
+# Reading to make sure its saved correctly
+print("\nChecking file contents:")
 with open("python_notes.txt", "r") as f:
-    for i, line in enumerate(f, 1):
-        if line.strip():
-            print(f"L{i}: {line.rstrip()}")
+    for line_num, text in enumerate(f, 1):
+        if text.strip():
+            print(f"Line {line_num}: {text.rstrip()}")
 
-# Quick stats check
+# Getting some quick stats on the file
 with open("python_notes.txt", "r") as f:
-    full_text = f.read()
-    line_count = full_text.count('\n')
-    word_count = len(full_text.split())
-    print(f"\nStats -> Lines: {line_count}, Words: {word_count}")
+    content = f.read()
+    lines_found = content.count('\n')
+    words_found = len(content.split())
+    print(f"\nFile Stats -> Lines: {lines_found}, Words: {words_found}")
 
-# Adding more info to the end of the file
+# Adding a few more points to the end
 with open("python_notes.txt", "a") as f:
     f.write("6. Lists are mutable, but tuples are not.\n")
     f.write("7. Dictionaries use key-value pairs.\n")
-print("Added 2 more points to the file.")
+print("Appended 2 extra points to the notes.")
 
 
-# 2. Handling Errors and Logging them
-print("\n--- Section 2: Exception Handling ---")
+# 2: ERROR HANDLING & LOGGING
+print("\n-Starting Exception Handling-")
 
-log_name = "error_log.txt"
+log_filename = "error_log.txt"
 
-def record_problem(kind, detail):
-    # Log errors with a timestamp so I know when they happened
-    now = datetime.now().strftime("%H:%M:%S")
-    with open(log_name, "a") as f:
-        f.write(f"[{now}] {kind}: {detail}\n")
-    print(f"Log updated: {kind}")
+# Clear the log file for this run
+with open(log_filename, "w") as f:
+    f.write("Error Tracking Log\n-----\n")
 
-# Reset the log for a fresh run
-with open(log_name, "w") as f:
-    f.write("Error Tracking Log\n------------------\n")
+def log_issue(error_name, message):
+    # Log the error with a quick timestamp
+    current_time = datetime.now().strftime("%H:%M:%S")
+    with open(log_filename, "a") as f:
+        f.write(f"[{current_time}] {error_name}: {message}\n")
+    print(f"Logged a {error_name} to the file.")
 
-# Try-Except tests for common issues
+# Running tests for 4 common errors
 try:
-    # Test 1: Math error
-    oops = 10 / 0
+    # Test 1: Division by zero
+    bad_math = 10 / 0
 except ZeroDivisionError as e:
-    record_problem("MathError", str(e))
+    log_issue("MathError", str(e))
 
 try:
-    # Test 2: File missing
-    with open("missing.txt", "r") as f:
+    # Test 2: File doesn't exist
+    with open("not_a_real_file.txt", "r") as f:
         data = f.read()
-except FileNotFoundError as e:
-    record_problem("FileMissing", "The text file was not found.")
+except FileNotFoundError:
+    log_issue("FileMissing", "The text file was not found in the folder.")
 
 try:
-    # Test 3: Type mismatch
-    val = int("abc")
-except ValueError as e:
-    record_problem("ValueError", "Cannot turn text into a number.")
+    # Test 3: String to Int conversion fail
+    val = int("python")
+except ValueError:
+    log_issue("ValueError", "Cannot convert alphabetical text into an integer.")
 
 try:
-    # Test 4: List index error
-    items = [1, 2]
-    pick = items[5]
-except IndexError as e:
-    record_problem("IndexError", "Index was out of range.")
+    # Test 4: Accessing index that isn't there
+    nums = [1, 5]
+    pick = nums[10]
+except IndexError:
+    log_issue("IndexError", "The list index is out of bounds.")
 
 
-# 3. Pulling Data from an API
-print("\n--- Section 3: API Integration ---")
+# 3: API INTEGRATION
+print("\n-Starting API Integration-")
 
-def get_web_data(url):
-    print(f"Contacting: {url}")
+def get_json_data(target_url):
+    print(f"Fetching from: {target_url}")
     try:
-        # 10 second timeout just in case it hangs
-        r = requests.get(url, timeout=10)
-        r.raise_for_status() 
-        return r.json()
-    except Exception as e:
-        record_problem("API_Fail", str(e))
+        # Standard 10s timeout
+        response = requests.get(target_url, timeout=10)
+        response.raise_for_status() 
+        return response.json()
+    except Exception as err:
+        log_issue("API_Fail", str(err))
         return None
 
-# Fetching users
-user_list = get_web_data("https://jsonplaceholder.typicode.com/users")
+# Get user data first
+users = get_json_data("https://jsonplaceholder.typicode.com/users")
 
-if user_list:
-    print(f"Got {len(user_list)} users. Here are the first few:")
-    for u in user_list[:3]:
-        print(f"- {u['name']} works at {u['company']['name']} in {u['address']['city']}")
+if users:
+    print(f"Found {len(users)} users. Examples:")
+    for u in users[:3]:
+        company_nm = u['company']['name']
+        city_nm = u['address']['city']
+        print(f" * {u['name']} (Company: {company_nm}, City: {city_nm})")
 
-    # Save to JSON file
+    # Exporting the user list to JSON
     with open("users_data.json", "w") as f:
-        json.dump(user_list, f, indent=2)
-    print("\nData exported to users_data.json.")
+        json.dump(users, f, indent=2)
+    print("\nUsers exported to users_data.json.")
 
-# Fetching posts
-post_list = get_web_data("https://jsonplaceholder.typicode.com/posts")
-if post_list:
-    print(f"\nSummary: Found {len(post_list)} posts.")
-    # Basic analysis: counting posts for a few users
-    counts = {}
-    for p in post_list:
-        uid = p['userId']
-        counts[uid] = counts.get(uid, 0) + 1
+# Get post data next
+posts = get_json_data("https://jsonplaceholder.typicode.com/posts")
+if posts:
+    print(f"\nSuccess: Retrieved {len(posts)} posts.")
     
-    print("Post counts for first 3 user IDs:")
-    for uid in sorted(counts.keys())[:3]:
-        print(f" User {uid}: {counts[uid]} posts")
+    # Manual dictionary counting (feels more like student code than .get())
+    post_counts = {}
+    for p in posts:
+        uid = p['userId']
+        if uid in post_counts:
+            post_counts[uid] += 1
+        else:
+            post_counts[uid] = 1
+    
+    print("Posts per user (top 3 IDs):")
+    sorted_ids = sorted(post_counts.keys())
+    for uid in sorted_ids[:3]:
+        print(f" - User {uid}: {post_counts[uid]} posts")
 
-print("\n--- Final Check of Error Log ---")
-with open(log_name, "r") as f:
+print("\n-Final View of the Error Log-")
+with open(log_filename, "r") as f:
     print(f.read())
 
-print("Part 3 script finished.")
+print("Part 3 script is finished.")
