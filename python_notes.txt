@@ -1,0 +1,9 @@
+Python Fundamentals
+-------------------
+1. It is a high-level language.
+2. Indentation matters! No curly braces needed.
+3. Huge library ecosystem (like requests for APIs).
+4. Everything is an object.
+5. Great for data science and automation.
+6. Lists are mutable, but tuples are not.
+7. Dictionaries use key-value pairs.

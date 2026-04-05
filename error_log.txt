@@ -1,0 +1,6 @@
+Error Tracking Log
+------------------
+[11:45:54] MathError: division by zero
+[11:45:54] FileMissing: The text file was not found.
+[11:45:54] ValueError: Cannot turn text into a number.
+[11:45:54] IndexError: Index was out of range.
